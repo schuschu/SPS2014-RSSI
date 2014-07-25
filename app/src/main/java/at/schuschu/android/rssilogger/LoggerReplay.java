@@ -20,10 +20,10 @@ public class LoggerReplay extends Activity {
 
     ArrayAdapter<String> adapter;
     SimpleAdapter simpleadapter;
-    HashMap<String,ArrayList<HashMap<String, String>>> backlog;
+    HashMap<String, ArrayList<HashMap<String, String>>> backlog;
     ArrayList<String> timelist;
     ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
-    ListView timeview,listview;
+    ListView timeview, listview;
     Listy listy;
 
 
@@ -32,7 +32,7 @@ public class LoggerReplay extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
 
-            String item = ((TextView)view).getText().toString();
+            String item = ((TextView) view).getText().toString();
             ArrayList<HashMap<String, String>> list = backlog.get(item);
             arraylist.clear();
             arraylist.addAll(list);
@@ -45,26 +45,25 @@ public class LoggerReplay extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logger_replay);
-        backlog = (HashMap<String,ArrayList<HashMap<String, String>>>) getIntent().getSerializableExtra("BACKLOG");
+        backlog = (HashMap<String, ArrayList<HashMap<String, String>>>) getIntent().getSerializableExtra("BACKLOG");
         timelist = new ArrayList<String>();
-        listy=new Listy();
+        listy = new Listy();
 
-        if(backlog==null) {
+        if (backlog == null) {
             Log.e("Replay", "Nothing passed to this activity!");
             return;
         }
 
-        timeview = (ListView)findViewById(R.id.lv_timestamp);
-        listview = (ListView)findViewById(R.id.lv_replay);
+        timeview = (ListView) findViewById(R.id.lv_timestamp);
+        listview = (ListView) findViewById(R.id.lv_replay);
 
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,timelist);
-        simpleadapter = new SimpleAdapter(this, arraylist, R.layout.listview_row, new String[] { LoggerMain.SSID_KEY,LoggerMain.LEVEL_KEY,LoggerMain.BSSID_KEY }, new int[] { R.id.tv_row_ssid , R.id.tv_row_level, R.id.tv_row_bssid});
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, timelist);
+        simpleadapter = new SimpleAdapter(this, arraylist, R.layout.listview_row, new String[]{LoggerMain.SSID_KEY, LoggerMain.LEVEL_KEY, LoggerMain.BSSID_KEY}, new int[]{R.id.tv_row_ssid, R.id.tv_row_level, R.id.tv_row_bssid});
 
         timeview.setAdapter(adapter);
         listview.setAdapter(simpleadapter);
 
-        for(String timestamp : backlog.keySet())
-        {
+        for (String timestamp : backlog.keySet()) {
             timelist.add(timestamp);
         }
 
@@ -81,15 +80,15 @@ public class LoggerReplay extends Activity {
         return true;
     }
 
-    public void oblivion (View view){
+    public void oblivion(View view) {
         File file = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
         file.delete();
-        backlog=new HashMap<String,ArrayList<HashMap<String, String>>>();
+        backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
         arraylist.clear();
         timelist.clear();
         simpleadapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
-        LoggerMain.backlog=this.backlog;
+        LoggerMain.backlog = this.backlog;
     }
 
     @Override

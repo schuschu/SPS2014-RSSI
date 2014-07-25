@@ -73,14 +73,14 @@ public class LoggerMain extends Activity {
         try {
 
             File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
-            if(json.exists()) {
+            if (json.exists()) {
                 BufferedReader br;
                 br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
                 Gson gson = new Gson();
                 backlog = gson.fromJson(br, backlog.getClass());
             }
-        } catch (IOException e){
-                e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
 
         }
 
