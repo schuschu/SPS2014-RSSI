@@ -1,8 +1,10 @@
 package at.schuschu.android.rssilogger;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -11,9 +13,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +40,10 @@ public class LoggerMain extends Activity {
     IntentFilter filter;
     WifiManager wifimanager;
     ListView listview;
+    Spinner sp_room;
     Button button;
+    ArrayAdapter<String> room_dropdown;
+    ArrayList<String> room_list;
     SimpleAdapter adapter;
     TextView lastscan;
     boolean running;
@@ -69,13 +77,16 @@ public class LoggerMain extends Activity {
         lastscan = (TextView) findViewById(R.id.tv_lastscan);
         button = (Button) findViewById(R.id.bu_scan);
         listview = (ListView) findViewById(R.id.lv_results);
+        sp_room = (Spinner) findViewById(R.id.sp_room);
+
+
 
         try {
 
             File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
             if (json.exists()) {
                 BufferedReader br;
-                br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
+                br = new BufferedReader(new FileReader(json));
                 Gson gson = new Gson();
                 backlog = gson.fromJson(br, backlog.getClass());
             }
@@ -84,12 +95,26 @@ public class LoggerMain extends Activity {
 
         }
 
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.cfg");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                room_list = gson.fromJson(br, room_list.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         {
             Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
             wifimanager.setWifiEnabled(true);
         }
 
+
+        room_dropdown = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, room_list);
         adapter = new SimpleAdapter(this, arraylist, R.layout.listview_row, new String[]{SSID_KEY, LEVEL_KEY, BSSID_KEY}, new int[]{R.id.tv_row_ssid, R.id.tv_row_level, R.id.tv_row_bssid});
         listview.setAdapter(adapter);
 
@@ -155,6 +180,18 @@ public class LoggerMain extends Activity {
             unregisterReceiver(bc);
             bc = null;
         }
+    }
+
+    public void addRoom(View view) {
+
+    }
+
+    public void deleteRoom(View view) {
+        if (room_list.isEmpty()) {
+            return;
+        }
+
+        room_list.remove(sp_room.getSelectedItemPosition());
     }
 
     public void updateview() {
