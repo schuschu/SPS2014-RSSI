@@ -240,6 +240,10 @@ public class LoggerMain extends Activity {
         startActivity(intent);
     }
 
+    public void guessMyRoomIntent(View v) {
+
+    }
+
     public void scan(View v) {
         Toast.makeText(this, "Scan STARTED!", Toast.LENGTH_SHORT).show();
         running = true;

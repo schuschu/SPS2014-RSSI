@@ -13,8 +13,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".LoggerMain"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,12 +23,16 @@
         </activity>
         <activity
             android:name=".LoggerReplay"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_logger_replay"
-            android:parentActivityName=".LoggerMain" >
+            android:parentActivityName=".LoggerMain"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="at.schuschu.android.rssilogger.LoggerMain" />
+        </activity>
+        <activity
+            android:name=".GuessMyRoom"
+            android:label="@string/title_activity_guess_my_room" >
         </activity>
     </application>
 
