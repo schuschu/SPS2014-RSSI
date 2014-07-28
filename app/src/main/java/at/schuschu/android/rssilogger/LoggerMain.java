@@ -93,6 +93,15 @@ public class LoggerMain extends Activity {
         if(!initialized) {
 
             try {
+                File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.cfg");
+                if (json.exists()) {
+                    BufferedReader br;
+                    br = new BufferedReader(new FileReader(json));
+                    Gson gson = new Gson();
+                    roomlist = gson.fromJson(br, roomlist.getClass());
+                }
+            
+            try {
 
                 File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
                 if (json.exists()) {
@@ -106,9 +115,9 @@ public class LoggerMain extends Activity {
 
             }
 
-            roomlist.add("Default");
-            roomlist.add("other");
-            initialized=true;
+                roomlist.add("Default");
+                roomlist.add("other");
+
         }
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
@@ -207,7 +216,13 @@ public class LoggerMain extends Activity {
             bc = null;
         }
     }
+    public void deleteRoom(View view) {
+        if (roomlist.isEmpty()) {
+            return;
+        }
 
+        roomlist.remove(spinner.getSelectedItemPosition());
+    }
     public void updateview() {
 
         if (!running) {
