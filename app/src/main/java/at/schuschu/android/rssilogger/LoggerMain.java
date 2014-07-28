@@ -106,9 +106,9 @@ public class LoggerMain extends Activity {
 
             }
 
-                roomlist.add("Default");
-                roomlist.add("other");
-
+            roomlist.add("Default");
+            roomlist.add("other");
+            initialized=true;
         }
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
