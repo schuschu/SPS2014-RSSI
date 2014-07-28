@@ -46,6 +46,8 @@ public class LoggerMain extends Activity {
     Spinner spinner;
     TextView lastscan;
     Spinny spinny;
+    // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
+    private HashMap<String, HashMap<String, HashMap<String, Integer> > > feature_map;
 
     boolean running;
     String suffix;
@@ -303,6 +305,56 @@ public class LoggerMain extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    public void extractFeatures(View view) {
+        for (String room : roomlist) {
+            HashMap<String, ArrayList<HashMap<String, String>>> current_room = new HashMap<String, ArrayList<HashMap<String, String>>>();
+            try {
+                File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger-"+room+"-json");
+                if (json.exists()) {
+                    BufferedReader br;
+                    br = new BufferedReader(new FileReader(json));
+                    Gson gson = new Gson();
+                    current_room = gson.fromJson(br, current_room.getClass());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            for (ArrayList<HashMap<String, String>> access_points : current_room.values()) {
+                for (HashMap<String, String> cur_access_points : access_points) {
+                    String name = cur_access_points.get(SSID_KEY);
+//                    name = name.substring(0,name.length() - 4);
+                    // we need to filter bssid which is done by the above statemet.. <.<
+                    if (!feature_map.containsKey(name)) {
+                        feature_map.put(name, new HashMap<String, HashMap<String, Integer> >());
+                    }
+
+                    if (!feature_map.get(name).containsKey(room)) {
+                        feature_map.get(name).put(room, new HashMap<String, Integer>());
+                    }
+
+                    if (!feature_map.get(name).get(room).containsKey(cur_access_points.get(LEVEL_KEY))) {
+                        feature_map.get(name).get(room).put(cur_access_points.get(LEVEL_KEY), 0);
+                    }
+                    feature_map.get(name).get(room).put(cur_access_points.get(LEVEL_KEY), feature_map.get(name).get(room).get(cur_access_points.get(LEVEL_KEY)) + 1);
+                }
+            }
+
+
+        }
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(feature_map);
+            FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "feature_map.json",false);
+            writer.write(json);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
