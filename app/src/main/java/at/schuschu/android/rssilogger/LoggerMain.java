@@ -36,6 +36,8 @@ import java.util.List;
 
 public class LoggerMain extends Activity {
 
+    private static boolean initialized=false;
+
     BroCast bc = null;
     IntentFilter filter;
     WifiManager wifimanager;
@@ -81,28 +83,33 @@ public class LoggerMain extends Activity {
         listview = (ListView) findViewById(R.id.lv_results);
         spinner = (Spinner) findViewById(R.id.sp_room);
 
-        try {
-
-            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
-            if (json.exists()) {
-                BufferedReader br;
-                br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
-                Gson gson = new Gson();
-                backlog = gson.fromJson(br, backlog.getClass());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         {
             //Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
             wifimanager.setWifiEnabled(true);
         }
 
-        roomlist.add("Default");
-        roomlist.add("other");
+
+        if(!initialized) {
+
+            try {
+
+                File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
+                if (json.exists()) {
+                    BufferedReader br;
+                    br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
+                    Gson gson = new Gson();
+                    backlog = gson.fromJson(br, backlog.getClass());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+                roomlist.add("Default");
+                roomlist.add("other");
+
+        }
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
