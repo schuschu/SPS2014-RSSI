@@ -206,7 +206,7 @@ public class LoggerMain extends Activity {
                 try {
                     Gson gson = new Gson();
                     String json = gson.toJson(LoggerMain.roomlist);
-                    FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-cfg.jason",false);
+                    FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-cfg.json",false);
                     writer.write(json);
                     writer.close();
 
