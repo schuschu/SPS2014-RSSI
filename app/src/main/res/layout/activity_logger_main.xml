@@ -59,6 +59,17 @@
         android:id="@+id/sp_room"
         android:layout_above="@+id/bu_scan"
         android:layout_alignParentStart="true"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:layout_toStartOf="@+id/bu_stop" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="setup"
+        android:id="@+id/bu_room"
+        android:layout_above="@+id/bu_replay"
+        android:layout_toEndOf="@+id/bu_scan"
+        android:layout_alignEnd="@+id/bu_replay"
+        android:layout_below="@+id/lv_results" />
 
 </RelativeLayout>
