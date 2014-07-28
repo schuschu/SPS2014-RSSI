@@ -281,7 +281,7 @@ public class LoggerMain extends Activity {
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(backlog);
-                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger-"+suffix+"-json");
+                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger-"+suffix+"-json",false);
                 writer.write(json);
                 writer.close();
 
