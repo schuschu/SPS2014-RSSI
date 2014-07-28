@@ -71,7 +71,7 @@
         android:layout_toEndOf="@+id/bu_scan"
         android:layout_below="@+id/lv_results"
         android:layout_toStartOf="@+id/bu_replay"
-        android:onClick="addroom" />
+        android:onClick="addRoom" />
 
     <Button
         android:layout_width="wrap_content"
@@ -81,6 +81,7 @@
         android:layout_toEndOf="@+id/bu_roomadd"
         android:layout_below="@+id/lv_results"
         android:layout_above="@+id/bu_replay"
-        android:layout_alignEnd="@+id/lv_results" />
+        android:layout_alignEnd="@+id/lv_results"
+        android:onClick="deleteRoom" />
 
 </RelativeLayout>

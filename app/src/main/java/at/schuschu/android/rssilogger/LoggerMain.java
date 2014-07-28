@@ -36,8 +36,6 @@ import java.util.List;
 
 public class LoggerMain extends Activity {
 
-    private static boolean initialized=false;
-
     BroCast bc = null;
     IntentFilter filter;
     WifiManager wifimanager;
@@ -56,7 +54,7 @@ public class LoggerMain extends Activity {
     static HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
 
     List<ScanResult> results;
-    final static String TS_KEY = "secret_ts_key_that_could_be_a_UUID";
+    //final static String TS_KEY = "secret_ts_key_that_could_be_a_UUID";
     final static String SSID_KEY = "secret_ssid_key_that_could_be_a_UUID";
     final static String LEVEL_KEY = "secret_level_key_that_could_be_a_UUID";
     final static String BSSID_KEY = "secret_bssid_key_that_could_be_a_UUID";
@@ -89,36 +87,36 @@ public class LoggerMain extends Activity {
             wifimanager.setWifiEnabled(true);
         }
 
-
-        if(!initialized) {
-
-            try {
-                File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.cfg");
-                if (json.exists()) {
-                    BufferedReader br;
-                    br = new BufferedReader(new FileReader(json));
-                    Gson gson = new Gson();
-                    roomlist = gson.fromJson(br, roomlist.getClass());
-                }
-            
-            try {
-
-                File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
-                if (json.exists()) {
-                    BufferedReader br;
-                    br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
-                    Gson gson = new Gson();
-                    backlog = gson.fromJson(br, backlog.getClass());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.cfg");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                roomlist = gson.fromJson(br, roomlist.getClass());
             }
-
-                roomlist.add("Default");
-                roomlist.add("other");
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        try {
+
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
+                Gson gson = new Gson();
+                backlog = gson.fromJson(br, backlog.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (roomlist.isEmpty()) {
+            roomlist.add("Default");
+            roomlist.add("other");
+        }
+
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
@@ -163,7 +161,7 @@ public class LoggerMain extends Activity {
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    public void addroom(View v) {
+    public void addRoom(View v) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle("Add new room:");
@@ -216,13 +214,16 @@ public class LoggerMain extends Activity {
             bc = null;
         }
     }
+
     public void deleteRoom(View view) {
         if (roomlist.isEmpty()) {
             return;
         }
 
         roomlist.remove(spinner.getSelectedItemPosition());
+        roomadapter.notifyDataSetChanged();
     }
+
     public void updateview() {
 
         if (!running) {
