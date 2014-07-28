@@ -84,4 +84,14 @@
         android:layout_alignEnd="@+id/lv_results"
         android:onClick="deleteRoom" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="extract features"
+        android:id="@+id/bu_features"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/bu_roomdel"
+        android:onClick="extractFeatures" />
+
 </RelativeLayout>
