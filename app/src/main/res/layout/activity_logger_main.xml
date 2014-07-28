@@ -70,7 +70,8 @@
         android:layout_above="@+id/bu_replay"
         android:layout_toEndOf="@+id/bu_scan"
         android:layout_below="@+id/lv_results"
-        android:layout_toStartOf="@+id/bu_replay" />
+        android:layout_toStartOf="@+id/bu_replay"
+        android:onClick="addroom" />
 
     <Button
         android:layout_width="wrap_content"

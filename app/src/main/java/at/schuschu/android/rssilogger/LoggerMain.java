@@ -1,10 +1,8 @@
 package at.schuschu.android.rssilogger;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -13,12 +11,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,13 +35,15 @@ public class LoggerMain extends Activity {
     IntentFilter filter;
     WifiManager wifimanager;
     ListView listview;
-    Spinner sp_room;
     Button button;
-    ArrayAdapter<String> room_dropdown;
-    ArrayList<String> room_list;
-    SimpleAdapter adapter;
+    Spinner spinner;
     TextView lastscan;
     boolean running;
+
+    SimpleAdapter adapter;
+    ArrayAdapter<String> roomadapter;
+
+    static ArrayList<String> roomlist = new ArrayList<String>();
     ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
     static HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
 
@@ -77,16 +74,14 @@ public class LoggerMain extends Activity {
         lastscan = (TextView) findViewById(R.id.tv_lastscan);
         button = (Button) findViewById(R.id.bu_scan);
         listview = (ListView) findViewById(R.id.lv_results);
-        sp_room = (Spinner) findViewById(R.id.sp_room);
-
-
+        spinner = (Spinner) findViewById(R.id.sp_room);
 
         try {
 
             File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
             if (json.exists()) {
                 BufferedReader br;
-                br = new BufferedReader(new FileReader(json));
+                br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
                 Gson gson = new Gson();
                 backlog = gson.fromJson(br, backlog.getClass());
             }
@@ -113,8 +108,12 @@ public class LoggerMain extends Activity {
             wifimanager.setWifiEnabled(true);
         }
 
+        roomlist.add("Default");
+        roomlist.add("other");
 
-        room_dropdown = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, room_list);
+        roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
+        spinner.setAdapter(roomadapter);
+
         adapter = new SimpleAdapter(this, arraylist, R.layout.listview_row, new String[]{SSID_KEY, LEVEL_KEY, BSSID_KEY}, new int[]{R.id.tv_row_ssid, R.id.tv_row_level, R.id.tv_row_bssid});
         listview.setAdapter(adapter);
 
@@ -156,6 +155,34 @@ public class LoggerMain extends Activity {
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    public void addroom(View v) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Add new room:");
+        alert.setMessage("Name:");
+
+// Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = String.valueOf(input.getText());
+                //Toast.makeText(getApplicationContext(), "Input:! " + value, Toast.LENGTH_SHORT).show();
+                LoggerMain.roomlist.add(value);
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+    }
+
     public void replay(View v) {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
@@ -181,11 +208,6 @@ public class LoggerMain extends Activity {
             bc = null;
         }
     }
-
-    public void addRoom(View view) {
-
-    }
-
     public void deleteRoom(View view) {
         if (room_list.isEmpty()) {
             return;
@@ -193,7 +215,6 @@ public class LoggerMain extends Activity {
 
         room_list.remove(sp_room.getSelectedItemPosition());
     }
-
     public void updateview() {
 
         if (!running) {
