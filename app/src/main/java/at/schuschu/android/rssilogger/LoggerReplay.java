@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import java.io.File;
+//import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -81,14 +81,14 @@ public class LoggerReplay extends Activity {
     }
 
     public void oblivion(View view) {
-        File file = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
-        file.delete();
-        backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
-        arraylist.clear();
-        timelist.clear();
-        simpleadapter.notifyDataSetChanged();
-        adapter.notifyDataSetChanged();
-        LoggerMain.backlog = this.backlog;
+//        File file = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
+//        file.delete();
+//        backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
+//        arraylist.clear();
+//        timelist.clear();
+//        simpleadapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
+//        LoggerMain.backlog = this.backlog;
     }
 
     @Override

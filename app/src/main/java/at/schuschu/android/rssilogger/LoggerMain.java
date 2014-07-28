@@ -37,6 +37,7 @@ import java.util.List;
 
 public class LoggerMain extends Activity {
 
+    private static final String rssi_dir = File.separator + "rssi_logger";
     BroCast bc = null;
     IntentFilter filter;
     WifiManager wifimanager;
@@ -54,10 +55,9 @@ public class LoggerMain extends Activity {
 
     static ArrayList<String> roomlist = new ArrayList<String>();
     ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
-    static HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
+    HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
 
     List<ScanResult> results;
-    //final static String TS_KEY = "secret_ts_key_that_could_be_a_UUID";
     final static String SSID_KEY = "secret_ssid_key_that_could_be_a_UUID";
     final static String LEVEL_KEY = "secret_level_key_that_could_be_a_UUID";
     final static String BSSID_KEY = "secret_bssid_key_that_could_be_a_UUID";
@@ -98,6 +98,14 @@ public class LoggerMain extends Activity {
         listview = (ListView) findViewById(R.id.lv_results);
         spinner = (Spinner) findViewById(R.id.sp_room);
 
+        try{
+            File rssi_dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir);
+            if (!rssi_dir.exists())
+            rssi_dir.mkdirs();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         {
             //Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
@@ -105,7 +113,7 @@ public class LoggerMain extends Activity {
         }
 
         try {
-            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.cfg");
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-cfg.json");
             if (json.exists()) {
                 BufferedReader br;
                 br = new BufferedReader(new FileReader(json));
@@ -116,22 +124,20 @@ public class LoggerMain extends Activity {
             e.printStackTrace();
         }
 
-        try {
-
-            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
-            if (json.exists()) {
-                BufferedReader br;
-                br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json"));
-                Gson gson = new Gson();
-                backlog = gson.fromJson(br, backlog.getClass());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger.json");
+//            if (json.exists()) {
+//                BufferedReader br;
+//                br = new BufferedReader(new FileReader(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger.json"));
+//                Gson gson = new Gson();
+//                backlog = gson.fromJson(br, backlog.getClass());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         if (roomlist.isEmpty()) {
             roomlist.add("Default");
-            roomlist.add("other");
         }
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
@@ -197,7 +203,16 @@ public class LoggerMain extends Activity {
                 String value = String.valueOf(input.getText());
                 //Toast.makeText(getApplicationContext(), "Input:! " + value, Toast.LENGTH_SHORT).show();
                 LoggerMain.roomlist.add(value);
+                try {
+                    Gson gson = new Gson();
+                    String json = gson.toJson(LoggerMain.roomlist);
+                    FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-cfg.jason",false);
+                    writer.write(json);
+                    writer.close();
 
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -281,7 +296,7 @@ public class LoggerMain extends Activity {
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(backlog);
-                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger-"+suffix+"-json",false);
+                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-"+suffix+"-json",false);
                 writer.write(json);
                 writer.close();
 
