@@ -48,7 +48,8 @@ public class LoggerMain extends Activity {
     TextView lastscan;
     Spinny spinny;
     // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
-    private HashMap<String, HashMap<String, HashMap<String, Integer> > > feature_map;
+    private HashMap<String, HashMap<String, HashMap<String, Integer> > > pmf_map;
+    public HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
 
     boolean running;
     String suffix;
@@ -94,7 +95,7 @@ public class LoggerMain extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logger_main);
-
+        feature_map = new HashMap<String, HashMap<String, HashMap< String, Float >>>();
         running = false;
         lastscan = (TextView) findViewById(R.id.tv_lastscan);
         button = (Button) findViewById(R.id.bu_scan);
@@ -143,7 +144,7 @@ public class LoggerMain extends Activity {
             roomlist.add("Default");
         }
 
-        feature_map = new HashMap<String, HashMap<String, HashMap<String, Integer> > >();
+        pmf_map = new HashMap<String, HashMap<String, HashMap<String, Integer> > >();
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
@@ -335,22 +336,55 @@ public class LoggerMain extends Activity {
 
 //                    name = name.substring(0,name.length() - 4);
                     // we need to filter bssid which is done by the above statemet.. <.<
-                    if (!feature_map.containsKey(name)) {
-                        feature_map.put(name, new HashMap<String, HashMap<String, Integer> >());
+                    if (!pmf_map.containsKey(name)) {
+                        pmf_map.put(name, new HashMap<String, HashMap<String, Integer> >());
                     }
 
-                    if (!feature_map.get(name).containsKey(room)) {
-                        feature_map.get(name).put(room, new HashMap<String, Integer>());
+                    if (!pmf_map.get(name).containsKey(room)) {
+                        pmf_map.get(name).put(room, new HashMap<String, Integer>());
                     }
 
-                    if (!feature_map.get(name).get(room).containsKey(cur_access_points.get(LEVEL_KEY))) {
-                        feature_map.get(name).get(room).put(cur_access_points.get(LEVEL_KEY), 0);
+                    if (!pmf_map.get(name).get(room).containsKey(cur_access_points.get(LEVEL_KEY))) {
+                        pmf_map.get(name).get(room).put(cur_access_points.get(LEVEL_KEY), 0);
                     }
-                    feature_map.get(name).get(room).put(cur_access_points.get(LEVEL_KEY), feature_map.get(name).get(room).get(cur_access_points.get(LEVEL_KEY)) + 1);
+                    pmf_map.get(name).get(room).put(cur_access_points.get(LEVEL_KEY), pmf_map.get(name).get(room).get(cur_access_points.get(LEVEL_KEY)) + 1);
                 }
             }
 
 
+        }
+        // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
+//        public HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
+        for (String access_point_string : pmf_map.keySet()) {
+            HashMap<String, HashMap <String, Integer>> access_point = pmf_map.get(access_point_string);
+            if (!feature_map.containsKey(access_point_string)) {
+                feature_map.put(access_point_string, new HashMap<String, HashMap<String, Float>>());
+            }
+            for (String room_string : access_point.keySet()) {
+                HashMap<String, Integer> room = access_point.get(room_string);
+                if (!feature_map.get(access_point_string).containsKey(room_string)) {
+                    feature_map.get(access_point_string).put(room_string, new HashMap<String, Float>());
+                }
+                Integer sum = 0;
+                for (Integer i : room.values()) {
+                    sum += i;
+                }
+                for (String i_string : room.keySet()) {
+                    Integer i = room.get(i_string);
+                    feature_map.get(access_point_string).get(room_string).put(i_string, i.floatValue()/sum.floatValue());
+                }
+
+            }
+        }
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(pmf_map);
+            FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "pmf_map.json",false);
+            writer.write(json);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         try {
             Gson gson = new Gson();
