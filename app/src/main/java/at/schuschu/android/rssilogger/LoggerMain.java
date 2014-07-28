@@ -1,8 +1,10 @@
 package at.schuschu.android.rssilogger;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -11,9 +13,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,7 +101,7 @@ public class LoggerMain extends Activity {
                 BufferedReader br;
                 br = new BufferedReader(new FileReader(json));
                 Gson gson = new Gson();
-                room_list = gson.fromJson(br, room_list.getClass());
+                roomlist = gson.fromJson(br, roomlist.getClass());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -209,11 +214,11 @@ public class LoggerMain extends Activity {
         }
     }
     public void deleteRoom(View view) {
-        if (room_list.isEmpty()) {
+        if (roomlist.isEmpty()) {
             return;
         }
 
-        room_list.remove(sp_room.getSelectedItemPosition());
+        roomlist.remove(spinner.getSelectedItemPosition());
     }
     public void updateview() {
 
