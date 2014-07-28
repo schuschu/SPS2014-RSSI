@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -141,6 +142,8 @@ public class LoggerMain extends Activity {
         if (roomlist.isEmpty()) {
             roomlist.add("Default");
         }
+
+        feature_map = new HashMap<String, HashMap<String, HashMap<String, Integer> > >();
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
@@ -311,7 +314,7 @@ public class LoggerMain extends Activity {
 
     public void extractFeatures(View view) {
         for (String room : roomlist) {
-            HashMap<String, ArrayList<HashMap<String, String>>> current_room = new HashMap<String, ArrayList<HashMap<String, String>>>();
+            HashMap<String, ArrayList<LinkedTreeMap<String, String>>> current_room = new HashMap<String, ArrayList<LinkedTreeMap<String, String>>>();
             try {
                 File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger-"+room+"-json");
                 if (json.exists()) {
@@ -324,9 +327,12 @@ public class LoggerMain extends Activity {
                 e.printStackTrace();
                 continue;
             }
-            for (ArrayList<HashMap<String, String>> access_points : current_room.values()) {
-                for (HashMap<String, String> cur_access_points : access_points) {
-                    String name = cur_access_points.get(SSID_KEY);
+            for (ArrayList<LinkedTreeMap<String, String>> access_points : current_room.values()) {
+                for (LinkedTreeMap<String, String> cur_access_points : access_points) {
+                    String name = cur_access_points.get(BSSID_KEY);
+                    if(Integer.parseInt(cur_access_points.get(LEVEL_KEY))<-80)
+                        continue;
+
 //                    name = name.substring(0,name.length() - 4);
                     // we need to filter bssid which is done by the above statemet.. <.<
                     if (!feature_map.containsKey(name)) {
