@@ -216,7 +216,8 @@ public class LoggerMain extends Activity {
     }
 
     public void deleteRoom(View view) {
-        if (roomlist.isEmpty()) {
+
+        if (roomlist.isEmpty()|| roomlist.size()<=1) {
             return;
         }
 
