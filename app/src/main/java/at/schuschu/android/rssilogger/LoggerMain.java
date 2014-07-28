@@ -1,8 +1,10 @@
 package at.schuschu.android.rssilogger;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -11,9 +13,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,9 +41,15 @@ public class LoggerMain extends Activity {
     WifiManager wifimanager;
     ListView listview;
     Button button;
-    SimpleAdapter adapter;
+    Spinner spinner;
     TextView lastscan;
+
     boolean running;
+
+    SimpleAdapter adapter;
+    ArrayAdapter<String> roomadapter;
+
+    static ArrayList<String> roomlist = new ArrayList<String>();
     ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
     static HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
 
@@ -65,10 +76,10 @@ public class LoggerMain extends Activity {
         setContentView(R.layout.activity_logger_main);
 
         running = false;
-
         lastscan = (TextView) findViewById(R.id.tv_lastscan);
         button = (Button) findViewById(R.id.bu_scan);
         listview = (ListView) findViewById(R.id.lv_results);
+        spinner = (Spinner) findViewById(R.id.sp_room);
 
         try {
 
@@ -86,9 +97,15 @@ public class LoggerMain extends Activity {
 
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         {
-            Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
             wifimanager.setWifiEnabled(true);
         }
+
+        roomlist.add("Default");
+        roomlist.add("other");
+
+        roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
+        spinner.setAdapter(roomadapter);
 
         adapter = new SimpleAdapter(this, arraylist, R.layout.listview_row, new String[]{SSID_KEY, LEVEL_KEY, BSSID_KEY}, new int[]{R.id.tv_row_ssid, R.id.tv_row_level, R.id.tv_row_bssid});
         listview.setAdapter(adapter);
@@ -96,7 +113,6 @@ public class LoggerMain extends Activity {
         bc = new BroCast();
         filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(bc, filter);
-
 
     }
 
@@ -129,6 +145,34 @@ public class LoggerMain extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    public void addroom(View v) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Add new room:");
+        alert.setMessage("Name:");
+
+// Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = String.valueOf(input.getText());
+                //Toast.makeText(getApplicationContext(), "Input:! " + value, Toast.LENGTH_SHORT).show();
+                LoggerMain.roomlist.add(value);
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     public void replay(View v) {
