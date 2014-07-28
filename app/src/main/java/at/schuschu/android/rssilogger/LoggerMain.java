@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,8 +44,10 @@ public class LoggerMain extends Activity {
     Button button;
     Spinner spinner;
     TextView lastscan;
+    Spinny spinny;
 
     boolean running;
+    String suffix;
 
     SimpleAdapter adapter;
     ArrayAdapter<String> roomadapter;
@@ -59,6 +62,20 @@ public class LoggerMain extends Activity {
     final static String LEVEL_KEY = "secret_level_key_that_could_be_a_UUID";
     final static String BSSID_KEY = "secret_bssid_key_that_could_be_a_UUID";
     int size = 0;
+
+
+    class Spinny implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            suffix = String.valueOf(spinner.getSelectedItem());
+            backlog.clear();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
 
     class BroCast extends BroadcastReceiver {
 
@@ -117,7 +134,6 @@ public class LoggerMain extends Activity {
             roomlist.add("other");
         }
 
-
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
 
@@ -127,6 +143,11 @@ public class LoggerMain extends Activity {
         bc = new BroCast();
         filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(bc, filter);
+
+        spinny=new Spinny();
+        spinner.setOnItemSelectedListener(spinny);
+
+        suffix=String.valueOf(spinner.getSelectedItem());
 
     }
 
@@ -260,7 +281,7 @@ public class LoggerMain extends Activity {
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(backlog);
-                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
+                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger-"+suffix+"-json");
                 writer.write(json);
                 writer.close();
 
