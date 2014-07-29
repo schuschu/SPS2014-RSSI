@@ -69,7 +69,7 @@ public class GuessMyRoom extends Activity {
         Comparator<ScanResult> c = new Comparator<ScanResult>() {
             @Override
             public int compare(ScanResult lhs, ScanResult rhs) {
-                return Integer.compare(lhs.level,rhs.level);
+                return Integer.compare(rhs.level,lhs.level);
             }
         };
         Collections.sort(rssi_sigs, c);
