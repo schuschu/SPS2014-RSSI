@@ -127,6 +127,17 @@ public class LoggerMain extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "feature_map.json");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                feature_map = gson.fromJson(br, feature_map.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 //        try {
 //            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger.json");
