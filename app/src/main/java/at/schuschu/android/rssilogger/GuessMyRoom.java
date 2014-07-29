@@ -82,6 +82,7 @@ public class GuessMyRoom extends Activity {
             }
             i++;
         }
+        i = 0;
         for (ScanResult rssi_signal : rssi_sigs) {
             if (i > 3) {
                 break;
