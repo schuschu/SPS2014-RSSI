@@ -114,7 +114,7 @@ public class GuessMyRoom extends Activity {
         for (String acc_point : acc_point_beliefs.keySet()) {
             try {
                 Gson gson = new Gson();
-                String json = gson.toJson(acc_point);
+                String json = gson.toJson(acc_point_beliefs.get(acc_point));
                 FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + acc_point + ".json");
                 writer.write(json);
                 writer.close();
