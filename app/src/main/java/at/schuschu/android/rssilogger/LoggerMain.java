@@ -38,7 +38,7 @@ import java.util.List;
 
 public class LoggerMain extends Activity {
 
-    private static final String rssi_dir = File.separator + "rssi_logger";
+    public static final String rssi_dir = File.separator + "rssi_logger";
     BroCast bc = null;
     IntentFilter filter;
     WifiManager wifimanager;
@@ -241,7 +241,13 @@ public class LoggerMain extends Activity {
     }
 
     public void guessMyRoomIntent(View v) {
-
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Config", roomlist);
+        bundle.putSerializable("Features", feature_map);
+        intent.putExtras(bundle);
+        intent.setClass(this, GuessMyRoom.class);
+        startActivity(intent);
     }
 
     public void scan(View v) {
