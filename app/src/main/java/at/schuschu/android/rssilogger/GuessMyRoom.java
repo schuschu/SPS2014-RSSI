@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -26,6 +27,7 @@ import java.util.List;
 import at.schuschu.android.rssilogger.R;
 
 public class GuessMyRoom extends Activity {
+    Integer number_of_measurements;
     private HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
     private ArrayList<String> roomlist;
     private HashMap<String, Float> room_probabilities;
@@ -46,10 +48,11 @@ public class GuessMyRoom extends Activity {
 
         //Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
         wifimanager.setWifiEnabled(true);
-
+        number_of_measurements = 0;
         bc = new BayesThread();
         filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(bc, filter);
+
     }
 
     private HashMap<String, Float> createInitialBelief(ArrayList<String> rooms) {
@@ -62,7 +65,7 @@ public class GuessMyRoom extends Activity {
     }
 
     private void UpdateBayes(List<ScanResult> rssi_sigs) {
-
+        number_of_measurements++;
         Comparator<ScanResult> c = new Comparator<ScanResult>() {
             @Override
             public int compare(ScanResult lhs, ScanResult rhs) {
@@ -105,9 +108,11 @@ public class GuessMyRoom extends Activity {
                 cur_acc_point_belief.put(rooms, cur_prob * measurement);
                 sum += cur_acc_point_belief.get(rooms);
             }
-            for (String rooms : acc_point.keySet()) {
-                if (cur_acc_point_belief.get(rooms) != 0.0f) {
-                    cur_acc_point_belief.put(rooms, cur_acc_point_belief.get(rooms) / sum);
+            if (sum != 0.0f) {
+                for (String rooms : acc_point.keySet()) {
+                    if (cur_acc_point_belief.get(rooms) != 0.0f) {
+                        cur_acc_point_belief.put(rooms, cur_acc_point_belief.get(rooms) / sum);
+                    }
                 }
             }
         }
@@ -123,6 +128,8 @@ public class GuessMyRoom extends Activity {
                 e.printStackTrace();
             }
         }
+        TextView result = (TextView) findViewById(R.id.resultText);
+        result.setText("Current number of measurements: " + Integer.toString(number_of_measurements));
     }
 
 
