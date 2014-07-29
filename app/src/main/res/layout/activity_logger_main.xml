@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/lv_results"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tv_lastscan"
-        android:layout_above="@+id/sp_room" />
+        android:layout_above="@+id/sp_room"
+        android:layout_below="@+id/tv_lastscan" />
 
     <Button
         android:layout_width="wrap_content"
@@ -40,9 +40,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/tv_lastscan"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/lv_results" />
+        android:layout_below="@+id/bu_features"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -93,5 +92,15 @@
         android:layout_alignParentTop="true"
         android:layout_alignEnd="@+id/bu_roomdel"
         android:onClick="extractFeatures" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Bayes"
+        android:id="@+id/bu_start_bayes"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:onClick="guessMyRoomIntent" />
 
 </RelativeLayout>
