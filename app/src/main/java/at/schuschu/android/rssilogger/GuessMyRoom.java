@@ -28,7 +28,7 @@ import at.schuschu.android.rssilogger.R;
 
 public class GuessMyRoom extends Activity {
     Integer number_of_measurements;
-    private HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
+    private HashMap<String, HashMap<String, HashMap< String, Double >>> feature_map;
     private ArrayList<String> roomlist;
     private HashMap<String, Float> room_probabilities;
     private BayesThread bc;
@@ -41,7 +41,7 @@ public class GuessMyRoom extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_my_room);
-        feature_map = (HashMap<String, HashMap<String, HashMap< String, Float >>>) getIntent().getSerializableExtra("Features");
+        feature_map = (HashMap<String, HashMap<String, HashMap< String, Double >>>) getIntent().getSerializableExtra("Features");
         roomlist = (ArrayList<String>) getIntent().getSerializableExtra("Config");
         room_probabilities = createInitialBelief(roomlist);
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -88,7 +88,7 @@ public class GuessMyRoom extends Activity {
                 break;
             }
             i++;
-            HashMap<String, HashMap<String, Float>> acc_point;
+            HashMap<String, HashMap<String, Double>> acc_point;
             if (feature_map.containsKey(rssi_signal.BSSID)) {
                 acc_point = feature_map.get(rssi_signal.BSSID);
             } else {
@@ -102,11 +102,12 @@ public class GuessMyRoom extends Activity {
             for (String rooms : acc_point.keySet()) {
                 Float cur_prob = cur_acc_point_belief.get(rooms);
 
-                Float measurement = 0.0f;
+                Double measurement = 0.0;
                 if (acc_point.get(rooms).containsKey(Integer.toString(rssi_signal.level))) {
                     measurement = acc_point.get(rooms).get(Integer.toString(rssi_signal.level));
                 }
-                cur_acc_point_belief.put(rooms, cur_prob * measurement);
+
+                cur_acc_point_belief.put(rooms, (cur_prob * measurement.floatValue()));
                 sum += cur_acc_point_belief.get(rooms);
             }
             if (sum != 0.0f) {
