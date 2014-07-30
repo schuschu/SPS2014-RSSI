@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +50,7 @@ public class LoggerMain extends Activity {
     Spinner spinner;
     TextView lastscan;
     Spinny spinny;
+    Selecty selecty;
     // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
     private HashMap<String, HashMap<String, HashMap<String, Integer> > > pmf_map;
     public HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
@@ -60,6 +64,7 @@ public class LoggerMain extends Activity {
     static ArrayList<String> roomlist = new ArrayList<String>();
     ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
     HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
+    ArrayList<String> blacklist=new ArrayList<String>();
 
     List<ScanResult> results;
     final static String SSID_KEY = "secret_ssid_key_that_could_be_a_UUID";
@@ -85,9 +90,40 @@ public class LoggerMain extends Activity {
 
         @Override
         public void onReceive(Context c, Intent intent) {
+            Comparator<ScanResult> comp = new Comparator<ScanResult>() {
+                @Override
+                public int compare(ScanResult lhs, ScanResult rhs) {
+                    return Integer.compare(lhs.level,rhs.level);
+                }
+            };
+
+            List<ScanResult> blacked;
+            blacked = new ArrayList<ScanResult>();
             results = wifimanager.getScanResults();
-            size = results.size();
-            updateview();
+
+                for (ScanResult result : results) {
+                    if (blacklist.contains(result.BSSID)) {
+                        blacked.add(result);
+                        Log.i("BLACKLIST", "Removed " + result.SSID);
+                    }
+                }
+
+                results.removeAll(blacked);
+
+                Collections.sort(results,comp);
+
+                size = results.size();
+                updateview();
+
+        }
+    }
+
+    class Selecty implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            blacklist.add(results.get(results.size()-1-position).BSSID);
+            Toast.makeText(getApplicationContext(),"blacklisted: " + results.get(results.size()-1-position).SSID + "(" +results.get(results.size()-1-position).BSSID+")" ,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -160,8 +196,10 @@ public class LoggerMain extends Activity {
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
 
+        selecty = new Selecty();
         adapter = new SimpleAdapter(this, arraylist, R.layout.listview_row, new String[]{SSID_KEY, LEVEL_KEY, BSSID_KEY}, new int[]{R.id.tv_row_ssid, R.id.tv_row_level, R.id.tv_row_bssid});
         listview.setAdapter(adapter);
+        listview.setOnItemClickListener(selecty);
 
         bc = new BroCast();
         filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);

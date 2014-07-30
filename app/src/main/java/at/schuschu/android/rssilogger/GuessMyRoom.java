@@ -142,7 +142,7 @@ public class GuessMyRoom extends Activity {
             }
         }
         i = 0;
-        for (String acc_point : acc_point_beliefs.keySet()) {
+/*        for (String acc_point : acc_point_beliefs.keySet()) {
             if (i > 3) {
                 break;
             }
@@ -157,7 +157,7 @@ public class GuessMyRoom extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
         boolean first = true;
 
         for (HashMap<String, Float> room_belief : acc_point_beliefs.values()) {
