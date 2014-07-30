@@ -80,6 +80,10 @@ public class GuessMyRoom extends Activity {
         int i = 0;
         HashMap< String, HashMap<String, Float> > acc_point_beliefs = new HashMap<String, HashMap<String, Float>>();
         for (ScanResult rssi_signal : rssi_sigs) {
+            if (!feature_map.containsKey(rssi_signal.BSSID)) {
+                continue;
+            }
+
             acc_point_beliefs.put(rssi_signal.BSSID, new HashMap<String, Float>(room_probabilities));
             if (i > 3) {
                 break;
@@ -91,13 +95,14 @@ public class GuessMyRoom extends Activity {
             if (i > 3) {
                 break;
             }
-            i++;
+
             HashMap<String, HashMap<String, Double>> acc_point;
             if (feature_map.containsKey(rssi_signal.BSSID)) {
                 acc_point = feature_map.get(rssi_signal.BSSID);
             } else {
                 continue;
             }
+            i++;
 
 
             HashMap<String, Float> cur_acc_point_belief = acc_point_beliefs.get(rssi_signal.BSSID);
