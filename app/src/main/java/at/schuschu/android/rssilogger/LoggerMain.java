@@ -145,6 +145,7 @@ public class LoggerMain extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logger_main);
         feature_map = new HashMap<String, HashMap<String, HashMap< String, Float >>>();
+        pmf_map = new HashMap<String, HashMap<String, HashMap<String, Integer>>>();
         running = false;
         lastscan = (TextView) findViewById(R.id.tv_lastscan);
         button = (Button) findViewById(R.id.bu_scan);
