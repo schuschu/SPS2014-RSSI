@@ -5,5 +5,6 @@ package at.schuschu.android.rssilogger;
  */
 public interface FeatureMapInterface {
     public Float getProbability(String bssid, String room, String level);
+    public Object getFeatureMap();
     public boolean doesAccPointExist(String bssid);
 }

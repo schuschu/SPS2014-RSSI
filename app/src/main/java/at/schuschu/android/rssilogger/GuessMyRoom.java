@@ -51,6 +51,16 @@ public class GuessMyRoom extends Activity {
 //
 // features = new FeatureMapLUT(feature_map);
         features = new FeatureMapGauss(pmf_map);
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(features.getFeatureMap());
+            FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "current_feature_map.json", true);
+            writer.write(json);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         roomlist = (ArrayList<String>) getIntent().getSerializableExtra("Config");
         room_probabilities = createInitialBelief(roomlist);
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);

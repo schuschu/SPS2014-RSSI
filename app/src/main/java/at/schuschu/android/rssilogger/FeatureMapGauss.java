@@ -12,6 +12,14 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
  */
 public class FeatureMapGauss implements FeatureMapInterface {
 
+    public HashMap<String, HashMap<String, Gaussian>> getFeature_map() {
+        return feature_map;
+    }
+
+    public void setFeature_map(HashMap<String, HashMap<String, Gaussian>> feature_map) {
+        this.feature_map = feature_map;
+    }
+
     public class Gaussian {
         public Double mean;
         public Double variance;
@@ -25,11 +33,11 @@ public class FeatureMapGauss implements FeatureMapInterface {
     private HashMap<String, HashMap<String, Gaussian>> feature_map;
 
     public FeatureMapGauss(HashMap<String, HashMap<String, HashMap<String, Integer>>> f_map) {
-        feature_map = new HashMap<String, HashMap<String, Gaussian>>();
+        setFeature_map(new HashMap<String, HashMap<String, Gaussian>>());
 
         for (String acc_point : f_map.keySet()) {
-            feature_map.put(acc_point, new HashMap<String, Gaussian>());
-            HashMap<String, Gaussian> cur_rooms = feature_map.get(acc_point);
+            getFeature_map().put(acc_point, new HashMap<String, Gaussian>());
+            HashMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
             for (String room : f_map.get(acc_point).keySet()) {
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();
@@ -51,9 +59,9 @@ public class FeatureMapGauss implements FeatureMapInterface {
 
     @Override
     public Float getProbability(String bssid, String room, String level) {
-        if (feature_map.containsKey(bssid)) {
-            if (feature_map.get(bssid).containsKey(room)) {
-                NormalDistribution d = new NormalDistribution(feature_map.get(bssid).get(room).mean.doubleValue(), feature_map.get(bssid).get(room).variance.doubleValue());
+        if (getFeature_map().containsKey(bssid)) {
+            if (getFeature_map().get(bssid).containsKey(room)) {
+                NormalDistribution d = new NormalDistribution(getFeature_map().get(bssid).get(room).mean.doubleValue(), getFeature_map().get(bssid).get(room).variance.doubleValue());
                 return new Float(d.cumulativeProbability(Integer.parseInt(level)));
             }
         }
@@ -61,7 +69,13 @@ public class FeatureMapGauss implements FeatureMapInterface {
     }
 
     @Override
+    public Object getFeatureMap() {
+         return feature_map;
+
+    }
+
+    @Override
     public boolean doesAccPointExist(String bssid) {
-        return feature_map.containsKey(bssid);
+        return getFeature_map().containsKey(bssid);
     }
 }

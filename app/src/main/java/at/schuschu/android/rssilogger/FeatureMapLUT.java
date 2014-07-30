@@ -24,6 +24,11 @@ public class FeatureMapLUT implements FeatureMapInterface {
     }
 
     @Override
+    public Object getFeatureMap() {
+        return feature_map;
+    }
+
+    @Override
     public boolean doesAccPointExist(String bssid) {
         return feature_map.containsKey(bssid);
     }
