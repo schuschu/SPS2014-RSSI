@@ -36,6 +36,7 @@ public class GuessMyRoom extends Activity {
     private BayesThread bc;
     private IntentFilter filter;
     private WifiManager wifimanager;
+    private FeatureMapInterface features;
 
 
 
@@ -44,6 +45,7 @@ public class GuessMyRoom extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_my_room);
         feature_map = (HashMap<String, HashMap<String, HashMap< String, Double >>>) getIntent().getSerializableExtra("Features");
+        features = new FeatureMapLUT(feature_map);
         roomlist = (ArrayList<String>) getIntent().getSerializableExtra("Config");
         room_probabilities = createInitialBelief(roomlist);
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -80,7 +82,7 @@ public class GuessMyRoom extends Activity {
         int i = 0;
         HashMap< String, HashMap<String, Float> > acc_point_beliefs = new HashMap<String, HashMap<String, Float>>();
         for (ScanResult rssi_signal : rssi_sigs) {
-            if (!feature_map.containsKey(rssi_signal.BSSID)) {
+            if (!features.doesAccPointExist(rssi_signal.BSSID)) {
                 continue;
             }
 
