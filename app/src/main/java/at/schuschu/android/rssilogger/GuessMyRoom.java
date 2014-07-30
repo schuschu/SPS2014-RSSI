@@ -130,7 +130,7 @@ public class GuessMyRoom extends Activity {
 
             acc_point_beliefs.put(rssi_signal.BSSID, new LinkedTreeMap<String, Float>());
             for (String room : room_probabilities.keySet()) {
-                acc_point_beliefs.get(rssi_signal).put(room, room_probabilities.get(room));
+                acc_point_beliefs.get(rssi_signal.BSSID).put(room, room_probabilities.get(room));
             }
             if (i > 3) {
                 break;
