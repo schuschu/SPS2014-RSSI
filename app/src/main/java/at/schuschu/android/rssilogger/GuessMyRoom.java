@@ -57,7 +57,7 @@ public class GuessMyRoom extends Activity {
 
     private HashMap<String, Float> createInitialBelief(ArrayList<String> rooms) {
         HashMap<String, Float> room_probs = new HashMap<String, Float>();
-        Float init = 1.0f/(Float.intBitsToFloat(rooms.size()));
+        Float init = 1.0f/(new Float(rooms.size()));
         for (String room : rooms) {
             room_probs.put(room,init);
         }
