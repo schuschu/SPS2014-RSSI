@@ -123,14 +123,22 @@ public class GuessMyRoom extends Activity {
                 checksum += acc_point_bel.floatValue();
             }
             if (checksum > 1.1f || checksum < 0.99f) {
-                Log.e("We have a problem here " + rssi_signal.BSSID + " " + rssi_signal.SSID, "sum != 1");
+                    Log.e("sum != 1", "We have a problem here " + rssi_signal.BSSID + " " + rssi_signal.SSID + ",but " + Float.toString(checksum) + ".");
+
+            } else {
+                Log.d("checksum", "current sum is " + Float.toString(checksum));
             }
         }
+        i = 0;
         for (String acc_point : acc_point_beliefs.keySet()) {
+            if (i > 3) {
+                break;
+            }
+            i++;
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(acc_point_beliefs.get(acc_point));
-                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + acc_point + ".json");
+                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + acc_point + ".json", true);
                 writer.write(json);
                 writer.close();
 
