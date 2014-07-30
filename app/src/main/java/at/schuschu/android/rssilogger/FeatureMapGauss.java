@@ -24,11 +24,7 @@ public class FeatureMapGauss implements FeatureMapInterface {
 
     private HashMap<String, HashMap<String, Gaussian>> feature_map;
 
-    public FeatureMapGauss(HashMap<String, HashMap<String, Gaussian>> gaussian_map, boolean to_be_ignored) {
-        this.feature_map = gaussian_map;
-    }
-
-    public FeatureMapGauss(HashMap<String, HashMap<String, HashMap<String, Double>>> f_map) {
+    public FeatureMapGauss(HashMap<String, HashMap<String, HashMap<String, Integer>>> f_map) {
         feature_map = new HashMap<String, HashMap<String, Gaussian>>();
 
         for (String acc_point : f_map.keySet()) {
@@ -37,9 +33,11 @@ public class FeatureMapGauss implements FeatureMapInterface {
             for (String room : f_map.get(acc_point).keySet()) {
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();
-                for (Double prob : f_map.get(acc_point).get(room).values()) {
-                    m.increment(prob);
-                    dev.increment(prob);
+                for (String level : f_map.get(acc_point).get(room).keySet()) {
+                    for (int i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
+                        m.increment(Integer.parseInt(level));
+                        dev.increment(Integer.parseInt(level));
+                    }
                 }
 
                 Double mean = m.getResult();

@@ -197,6 +197,17 @@ public class LoggerMain extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "pmf_map.json");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                pmf_map = gson.fromJson(br, pmf_map.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for (String acc_point : blacklist) {
             if (feature_map.containsKey(acc_point)) {
@@ -329,6 +340,7 @@ public class LoggerMain extends Activity {
         Bundle bundle = new Bundle();
         bundle.putSerializable("Config", roomlist);
         bundle.putSerializable("Features", feature_map);
+        bundle.putSerializable("PMF_MAP", pmf_map);
         intent.putExtras(bundle);
         intent.setClass(this, GuessMyRoom.class);
         startActivity(intent);

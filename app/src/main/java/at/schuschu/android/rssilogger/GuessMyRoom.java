@@ -31,6 +31,7 @@ import at.schuschu.android.rssilogger.R;
 public class GuessMyRoom extends Activity {
     Integer number_of_measurements;
     private HashMap<String, HashMap<String, HashMap< String, Double >>> feature_map;
+    private HashMap<String, HashMap<String, HashMap<String, Integer >>> pmf_map;
     private ArrayList<String> roomlist;
     private HashMap<String, Float> room_probabilities;
     private BayesThread bc;
@@ -45,7 +46,11 @@ public class GuessMyRoom extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_my_room);
         feature_map = (HashMap<String, HashMap<String, HashMap< String, Double >>>) getIntent().getSerializableExtra("Features");
-        features = new FeatureMapLUT(feature_map);
+        pmf_map = (HashMap<String, HashMap<String, HashMap<String, Integer>>>) getIntent().getSerializableExtra("PMF_MAP");
+        //change this for gaussian
+//
+// features = new FeatureMapLUT(feature_map);
+        features = new FeatureMapGauss(pmf_map);
         roomlist = (ArrayList<String>) getIntent().getSerializableExtra("Config");
         room_probabilities = createInitialBelief(roomlist);
         wifimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -98,10 +103,8 @@ public class GuessMyRoom extends Activity {
                 break;
             }
 
-            HashMap<String, HashMap<String, Double>> acc_point;
-            if (feature_map.containsKey(rssi_signal.BSSID)) {
-                acc_point = feature_map.get(rssi_signal.BSSID);
-            } else {
+           // HashMap<String, HashMap<String, Double>> acc_point;
+            if (!features.doesAccPointExist(rssi_signal.BSSID)) {
                 continue;
             }
             i++;
@@ -113,18 +116,16 @@ public class GuessMyRoom extends Activity {
             for (String rooms : cur_acc_point_belief.keySet()) {
                 Float cur_prob = cur_acc_point_belief.get(rooms);
 
-                Double measurement = 0.0;
-                if (acc_point.containsKey(rooms)) {
-                    if (acc_point.get(rooms).containsKey(Integer.toString(rssi_signal.level))) {
-                        measurement = acc_point.get(rooms).get(Integer.toString(rssi_signal.level));
-                    }
+                Float measurement = features.getProbability(rssi_signal.BSSID, rooms, Integer.toString(rssi_signal.level));
+                if (measurement == null) {
+                        measurement = 0.0f;
                 }
 
-                cur_acc_point_belief.put(rooms, (cur_prob * measurement.floatValue()));
+                cur_acc_point_belief.put(rooms, (cur_prob * measurement));
                 sum += cur_acc_point_belief.get(rooms);
             }
             if (sum != 0.0f) {
-                for (String rooms : acc_point.keySet()) {
+                for (String rooms : cur_acc_point_belief.keySet()) {
                     if (cur_acc_point_belief.get(rooms) != 0.0f) {
                         cur_acc_point_belief.put(rooms, cur_acc_point_belief.get(rooms) / sum);
                     }
