@@ -1,7 +1,8 @@
 package at.schuschu.android.rssilogger;
 
-import java.util.HashMap;
 //import org.apache.commons.math3.MathException;
+import com.google.gson.internal.LinkedTreeMap;
+
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
@@ -12,11 +13,11 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
  */
 public class FeatureMapGauss implements FeatureMapInterface {
 
-    public HashMap<String, HashMap<String, Gaussian>> getFeature_map() {
+    public LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>> getFeature_map() {
         return feature_map;
     }
 
-    public void setFeature_map(HashMap<String, HashMap<String, Gaussian>> feature_map) {
+    public void setFeature_map(LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>> feature_map) {
         this.feature_map = feature_map;
     }
 
@@ -30,14 +31,14 @@ public class FeatureMapGauss implements FeatureMapInterface {
         }
     }
 
-    private HashMap<String, HashMap<String, Gaussian>> feature_map;
+    private LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>> feature_map;
 
-    public FeatureMapGauss(HashMap<String, HashMap<String, HashMap<String, Integer>>> f_map) {
-        setFeature_map(new HashMap<String, HashMap<String, Gaussian>>());
+    public FeatureMapGauss(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>> f_map) {
+        setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
 
         for (String acc_point : f_map.keySet()) {
-            getFeature_map().put(acc_point, new HashMap<String, Gaussian>());
-            HashMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
+            getFeature_map().put(acc_point, new LinkedTreeMap<String, Gaussian>());
+            LinkedTreeMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
             for (String room : f_map.get(acc_point).keySet()) {
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();

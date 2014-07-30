@@ -13,16 +13,17 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 //import java.io.File;
+import com.google.gson.internal.LinkedTreeMap;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class LoggerReplay extends Activity {
 
     ArrayAdapter<String> adapter;
     SimpleAdapter simpleadapter;
-    HashMap<String, ArrayList<HashMap<String, String>>> backlog;
+    LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>> backlog;
     ArrayList<String> timelist;
-    ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
+    ArrayList<LinkedTreeMap<String, String>> arraylist = new ArrayList<LinkedTreeMap<String, String>>();
     ListView timeview, listview;
     Listy listy;
 
@@ -33,7 +34,7 @@ public class LoggerReplay extends Activity {
                                 long id) {
 
             String item = ((TextView) view).getText().toString();
-            ArrayList<HashMap<String, String>> list = backlog.get(item);
+            ArrayList<LinkedTreeMap<String, String>> list = backlog.get(item);
             arraylist.clear();
             arraylist.addAll(list);
             simpleadapter.notifyDataSetChanged();
@@ -45,7 +46,7 @@ public class LoggerReplay extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logger_replay);
-        backlog = (HashMap<String, ArrayList<HashMap<String, String>>>) getIntent().getSerializableExtra("BACKLOG");
+        backlog = (LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>>) getIntent().getSerializableExtra("BACKLOG");
         timelist = new ArrayList<String>();
         listy = new Listy();
 
@@ -83,7 +84,7 @@ public class LoggerReplay extends Activity {
     public void oblivion(View view) {
 //        File file = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/rssilogger.json");
 //        file.delete();
-//        backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
+//        backlog = new LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>>();
 //        arraylist.clear();
 //        timelist.clear();
 //        simpleadapter.notifyDataSetChanged();

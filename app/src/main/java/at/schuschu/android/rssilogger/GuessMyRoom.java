@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,17 +24,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import at.schuschu.android.rssilogger.R;
 
 public class GuessMyRoom extends Activity {
     Integer number_of_measurements;
-    private HashMap<String, HashMap<String, HashMap< String, Double >>> feature_map;
-    private HashMap<String, HashMap<String, HashMap<String, Integer >>> pmf_map;
+    private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Double >>> feature_map;
+    private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer >>> pmf_map;
     private ArrayList<String> roomlist;
-    private HashMap<String, Float> room_probabilities;
+    private LinkedTreeMap<String, Float> room_probabilities;
     private BayesThread bc;
     private IntentFilter filter;
     private WifiManager wifimanager;
@@ -45,8 +45,8 @@ public class GuessMyRoom extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_my_room);
-        feature_map = (HashMap<String, HashMap<String, HashMap< String, Double >>>) getIntent().getSerializableExtra("Features");
-        pmf_map = (HashMap<String, HashMap<String, HashMap<String, Integer>>>) getIntent().getSerializableExtra("PMF_MAP");
+        feature_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Double >>>) getIntent().getSerializableExtra("Features");
+        pmf_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>) getIntent().getSerializableExtra("PMF_MAP");
         //change this for gaussian
 //
 // features = new FeatureMapLUT(feature_map);
@@ -75,8 +75,8 @@ public class GuessMyRoom extends Activity {
 
     }
 
-    private HashMap<String, Float> createInitialBelief(ArrayList<String> rooms) {
-        HashMap<String, Float> room_probs = new HashMap<String, Float>();
+    private LinkedTreeMap<String, Float> createInitialBelief(ArrayList<String> rooms) {
+        LinkedTreeMap<String, Float> room_probs = new LinkedTreeMap<String, Float>();
         Float init = 1.0f/(new Float(rooms.size()));
         for (String room : rooms) {
             room_probs.put(room,init);
@@ -95,13 +95,13 @@ public class GuessMyRoom extends Activity {
         };
         Collections.sort(rssi_sigs, c);
         int i = 0;
-        HashMap< String, HashMap<String, Float> > acc_point_beliefs = new HashMap<String, HashMap<String, Float>>();
+        LinkedTreeMap< String, LinkedTreeMap<String, Float> > acc_point_beliefs = new LinkedTreeMap<String, LinkedTreeMap<String, Float>>();
         for (ScanResult rssi_signal : rssi_sigs) {
             if (!features.doesAccPointExist(rssi_signal.BSSID)) {
                 continue;
             }
 
-            acc_point_beliefs.put(rssi_signal.BSSID, new HashMap<String, Float>(room_probabilities));
+            acc_point_beliefs.put(rssi_signal.BSSID, new LinkedTreeMap<String, Float>(room_probabilities));
             if (i > 3) {
                 break;
             }
@@ -113,14 +113,14 @@ public class GuessMyRoom extends Activity {
                 break;
             }
 
-           // HashMap<String, HashMap<String, Double>> acc_point;
+           // LinkedTreeMap<String, LinkedTreeMap<String, Double>> acc_point;
             if (!features.doesAccPointExist(rssi_signal.BSSID)) {
                 continue;
             }
             i++;
 
 
-            HashMap<String, Float> cur_acc_point_belief = acc_point_beliefs.get(rssi_signal.BSSID);
+            LinkedTreeMap<String, Float> cur_acc_point_belief = acc_point_beliefs.get(rssi_signal.BSSID);
             Float sum = 0.0f;
 
             for (String rooms : cur_acc_point_belief.keySet()) {
@@ -173,7 +173,7 @@ public class GuessMyRoom extends Activity {
         }*/
         boolean first = true;
 
-        for (HashMap<String, Float> room_belief : acc_point_beliefs.values()) {
+        for (LinkedTreeMap<String, Float> room_belief : acc_point_beliefs.values()) {
             for (String cur_room : room_belief.keySet()) {
                 if (first) {
                     room_probabilities.put(cur_room, 0.0f);
@@ -205,7 +205,7 @@ public class GuessMyRoom extends Activity {
         result.setText(sb.toString());
     }
 
-    private void normalize(HashMap<String, Float> probs) {
+    private void normalize(LinkedTreeMap<String, Float> probs) {
         Float checksum = 0.0f;
         for (Float cur_prob : probs.values()) {
             checksum += cur_prob;

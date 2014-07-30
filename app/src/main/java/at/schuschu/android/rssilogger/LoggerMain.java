@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -52,8 +51,8 @@ public class LoggerMain extends Activity {
     Spinny spinny;
     Selecty selecty;
     // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
-    private HashMap<String, HashMap<String, HashMap<String, Integer> > > pmf_map;
-    public HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
+    private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer> > > pmf_map;
+    public LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Float >>> feature_map;
 
     boolean running;
     String suffix;
@@ -62,8 +61,8 @@ public class LoggerMain extends Activity {
     ArrayAdapter<String> roomadapter;
 
     static ArrayList<String> roomlist = new ArrayList<String>();
-    ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
-    HashMap<String, ArrayList<HashMap<String, String>>> backlog = new HashMap<String, ArrayList<HashMap<String, String>>>();
+    ArrayList<LinkedTreeMap<String, String>> arraylist = new ArrayList<LinkedTreeMap<String, String>>();
+    LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>> backlog = new LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>>();
     ArrayList<String> blacklist=new ArrayList<String>();
 
     List<ScanResult> results;
@@ -144,8 +143,8 @@ public class LoggerMain extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logger_main);
-        feature_map = new HashMap<String, HashMap<String, HashMap< String, Float >>>();
-        pmf_map = new HashMap<String, HashMap<String, HashMap<String, Integer>>>();
+        feature_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Float >>>();
+        pmf_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>();
         running = false;
         lastscan = (TextView) findViewById(R.id.tv_lastscan);
         button = (Button) findViewById(R.id.bu_scan);
@@ -233,7 +232,7 @@ public class LoggerMain extends Activity {
             roomlist.add("Default");
         }
 
-        pmf_map = new HashMap<String, HashMap<String, HashMap<String, Integer> > >();
+        pmf_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer> > >();
 
         roomadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomlist);
         spinner.setAdapter(roomadapter);
@@ -390,7 +389,7 @@ public class LoggerMain extends Activity {
         try {
             size = size - 1;
             while (size >= 0) {
-                HashMap<String, String> item = new HashMap<String, String>();
+                LinkedTreeMap<String, String> item = new LinkedTreeMap<String, String>();
                 item.put(SSID_KEY, results.get(size).SSID);
                 item.put(LEVEL_KEY, Integer.toString(results.get(size).level));
                 item.put(BSSID_KEY, results.get(size).BSSID);
@@ -400,7 +399,7 @@ public class LoggerMain extends Activity {
                 adapter.notifyDataSetChanged();
             }
         } catch (Exception e) { /* this is a sad day for mankind*/ } finally {
-            ArrayList<HashMap<String, String>> tempy = new ArrayList<HashMap<String, String>>(arraylist);
+            ArrayList<LinkedTreeMap<String, String>> tempy = new ArrayList<LinkedTreeMap<String, String>>(arraylist);
 
             long mills = System.currentTimeMillis();
             lastscan.setText("Last scan: " + mills);
@@ -422,7 +421,7 @@ public class LoggerMain extends Activity {
 
     public void extractFeatures(View view) {
         for (String room : roomlist) {
-            HashMap<String, ArrayList<LinkedTreeMap<String, String>>> current_room = new HashMap<String, ArrayList<LinkedTreeMap<String, String>>>();
+            LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>> current_room = new LinkedTreeMap<String, ArrayList<LinkedTreeMap<String, String>>>();
             try {
                 File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger-"+room+"-json");
                 if (json.exists()) {
@@ -444,11 +443,11 @@ public class LoggerMain extends Activity {
 //                    name = name.substring(0,name.length() - 4);
                     // we need to filter bssid which is done by the above statemet.. <.<
                     if (!pmf_map.containsKey(name)) {
-                        pmf_map.put(name, new HashMap<String, HashMap<String, Integer> >());
+                        pmf_map.put(name, new LinkedTreeMap<String, LinkedTreeMap<String, Integer> >());
                     }
 
                     if (!pmf_map.get(name).containsKey(room)) {
-                        pmf_map.get(name).put(room, new HashMap<String, Integer>());
+                        pmf_map.get(name).put(room, new LinkedTreeMap<String, Integer>());
                     }
 
                     if (!pmf_map.get(name).get(room).containsKey(cur_access_points.get(LEVEL_KEY))) {
@@ -461,18 +460,18 @@ public class LoggerMain extends Activity {
 
         }
         // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
-//        public HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
+//        public LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Float >>> feature_map;
         for (String access_point_string : pmf_map.keySet()) {
-            HashMap<String, HashMap <String, Integer>> access_point = new HashMap<String, HashMap<String, Integer>>();
+            LinkedTreeMap<String, LinkedTreeMap <String, Integer>> access_point = new LinkedTreeMap<String, LinkedTreeMap<String, Integer>>();
             access_point.putAll(pmf_map.get(access_point_string));
             if (!feature_map.containsKey(access_point_string)) {
-                feature_map.put(access_point_string, new HashMap<String, HashMap<String, Float>>());
+                feature_map.put(access_point_string, new LinkedTreeMap<String, LinkedTreeMap<String, Float>>());
             }
             for (String room_string : access_point.keySet()) {
-                HashMap<String, Integer> room = new HashMap<String, Integer>();
+                LinkedTreeMap<String, Integer> room = new LinkedTreeMap<String, Integer>();
                 room.putAll(access_point.get(room_string));
                 if (!feature_map.get(access_point_string).containsKey(room_string)) {
-                    feature_map.get(access_point_string).put(room_string, new HashMap<String, Float>());
+                    feature_map.get(access_point_string).put(room_string, new LinkedTreeMap<String, Float>());
                 }
                 Integer sum = 0;
                 for (Integer i : room.values()) {

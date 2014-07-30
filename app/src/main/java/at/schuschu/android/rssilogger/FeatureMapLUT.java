@@ -1,15 +1,16 @@
 package at.schuschu.android.rssilogger;
 
-import java.util.HashMap;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 /**
  * Created by shinji on 7/30/2014.
  */
 public class FeatureMapLUT implements FeatureMapInterface {
 
-    private HashMap<String, HashMap<String, HashMap<String, Double>>> feature_map;
+    private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>> feature_map;
 
-    public FeatureMapLUT(HashMap<String, HashMap<String, HashMap<String, Double>>> feature_map) {
+    public FeatureMapLUT(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>> feature_map) {
         this.feature_map = feature_map;
     }
 
