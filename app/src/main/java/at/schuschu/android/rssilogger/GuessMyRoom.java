@@ -103,12 +103,14 @@ public class GuessMyRoom extends Activity {
             HashMap<String, Float> cur_acc_point_belief = acc_point_beliefs.get(rssi_signal.BSSID);
             Float sum = 0.0f;
 
-            for (String rooms : acc_point.keySet()) {
+            for (String rooms : cur_acc_point_belief.keySet()) {
                 Float cur_prob = cur_acc_point_belief.get(rooms);
 
                 Double measurement = 0.0;
-                if (acc_point.get(rooms).containsKey(Integer.toString(rssi_signal.level))) {
-                    measurement = acc_point.get(rooms).get(Integer.toString(rssi_signal.level));
+                if (acc_point.containsKey(rooms)) {
+                    if (acc_point.get(rooms).containsKey(Integer.toString(rssi_signal.level))) {
+                        measurement = acc_point.get(rooms).get(Integer.toString(rssi_signal.level));
+                    }
                 }
 
                 cur_acc_point_belief.put(rooms, (cur_prob * measurement.floatValue()));
@@ -120,6 +122,8 @@ public class GuessMyRoom extends Activity {
                         cur_acc_point_belief.put(rooms, cur_acc_point_belief.get(rooms) / sum);
                     }
                 }
+            } else {
+
             }
             Float checksum = 0.0f;
             for (Float acc_point_bel : cur_acc_point_belief.values()) {
