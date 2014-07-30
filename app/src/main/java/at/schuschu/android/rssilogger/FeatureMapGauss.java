@@ -1,6 +1,8 @@
 package at.schuschu.android.rssilogger;
 
 //import org.apache.commons.math3.MathException;
+import android.util.Log;
+
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -33,7 +35,7 @@ public class FeatureMapGauss implements FeatureMapInterface {
 
     private LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>> feature_map;
 
-    public FeatureMapGauss(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>> f_map) {
+    public FeatureMapGauss(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>> f_map) {
         setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
 
         for (String acc_point : f_map.keySet()) {
@@ -43,7 +45,8 @@ public class FeatureMapGauss implements FeatureMapInterface {
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();
                 for (String level : f_map.get(acc_point).get(room).keySet()) {
-                    for (int i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
+                    Log.i("serialz", Double.toString(f_map.get(acc_point).get(room).get(level)));
+                    for (Integer i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
                         m.increment(Integer.parseInt(level));
                         dev.increment(Integer.parseInt(level));
                     }

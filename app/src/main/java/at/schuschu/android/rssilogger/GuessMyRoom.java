@@ -33,7 +33,7 @@ import at.schuschu.android.rssilogger.R;
 public class GuessMyRoom extends Activity {
     Integer number_of_measurements;
     private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Double >>> feature_map;
-    private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer >>> pmf_map;
+    private LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double >>> pmf_map;
     private ArrayList<String> roomlist;
     private LinkedTreeMap<String, Float> room_probabilities;
     private BayesThread bc;
@@ -48,7 +48,7 @@ public class GuessMyRoom extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_my_room);
         feature_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>>();
-        pmf_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>();
+        pmf_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>>();
 //        feature_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Double >>>) getIntent().getSerializableExtra("Features");
 //        pmf_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>) getIntent().getSerializableExtra("PMF_MAP");
         //change this for gaussian
