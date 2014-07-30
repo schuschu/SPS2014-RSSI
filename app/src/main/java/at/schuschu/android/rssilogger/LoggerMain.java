@@ -124,6 +124,19 @@ public class LoggerMain extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             blacklist.add(results.get(results.size()-1-position).BSSID);
             Toast.makeText(getApplicationContext(),"blacklisted: " + results.get(results.size()-1-position).SSID + "(" +results.get(results.size()-1-position).BSSID+")" ,Toast.LENGTH_LONG).show();
+
+            try {
+                Gson gson = new Gson();
+                String json = gson.toJson(blacklist);
+                FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-blacklist.json",false);
+                writer.write(json);
+                writer.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            backlog.clear();
         }
     }
 
@@ -151,7 +164,17 @@ public class LoggerMain extends Activity {
             //Toast.makeText(getApplicationContext(), "Works better with WiFi(TM) enabled", Toast.LENGTH_LONG).show();
             wifimanager.setWifiEnabled(true);
         }
-
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-blacklist.json");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                blacklist = gson.fromJson(br, blacklist.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try {
             File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-cfg.json");
             if (json.exists()) {
