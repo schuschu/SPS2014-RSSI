@@ -17,7 +17,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,9 +47,34 @@ public class GuessMyRoom extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_my_room);
-        feature_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Double >>>) getIntent().getSerializableExtra("Features");
-        pmf_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>) getIntent().getSerializableExtra("PMF_MAP");
+        feature_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>>();
+        pmf_map = new LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>();
+//        feature_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap< String, Double >>>) getIntent().getSerializableExtra("Features");
+//        pmf_map = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Integer>>>) getIntent().getSerializableExtra("PMF_MAP");
         //change this for gaussian
+
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "feature_map.json");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                feature_map = gson.fromJson(br, feature_map.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "pmf_map.json");
+            if (json.exists()) {
+                BufferedReader br;
+                br = new BufferedReader(new FileReader(json));
+                Gson gson = new Gson();
+                pmf_map = gson.fromJson(br, pmf_map.getClass());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //
 // features = new FeatureMapLUT(feature_map);
         features = new FeatureMapGauss(pmf_map);
