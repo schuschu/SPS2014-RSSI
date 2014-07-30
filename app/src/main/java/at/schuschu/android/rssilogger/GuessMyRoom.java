@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -116,6 +117,13 @@ public class GuessMyRoom extends Activity {
                         cur_acc_point_belief.put(rooms, cur_acc_point_belief.get(rooms) / sum);
                     }
                 }
+            }
+            Float checksum = 0.0f;
+            for (Float acc_point_bel : cur_acc_point_belief.values()) {
+                checksum += acc_point_bel.floatValue();
+            }
+            if (checksum > 1.1f || checksum < 0.99f) {
+                Log.e("We have a problem here " + rssi_signal.BSSID + " " + rssi_signal.SSID, "sum != 1");
             }
         }
         for (String acc_point : acc_point_beliefs.keySet()) {
