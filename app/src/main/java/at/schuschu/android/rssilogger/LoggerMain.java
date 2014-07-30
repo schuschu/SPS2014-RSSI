@@ -198,6 +198,13 @@ public class LoggerMain extends Activity {
             e.printStackTrace();
         }
 
+        for (String acc_point : blacklist) {
+            if (feature_map.containsKey(acc_point)) {
+                Log.i("Blacklist", "Removing " + acc_point + " from featuremap");
+                feature_map.remove(acc_point);
+            }
+        }
+
 //        try {
 //            File json = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator +"rssilogger.json");
 //            if (json.exists()) {
