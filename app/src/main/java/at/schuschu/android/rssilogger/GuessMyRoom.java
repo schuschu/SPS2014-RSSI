@@ -160,7 +160,7 @@ public class GuessMyRoom extends Activity {
         normalize(room_probabilities);
         try {
             Gson gson = new Gson();
-            String json = gson.toJson(acc_point_beliefs.get(room_probabilities));
+            String json = gson.toJson(room_probabilities);
             FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "roomprobs.json", true);
             writer.write(json);
             writer.close();
