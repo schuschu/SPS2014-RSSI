@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
@@ -65,8 +66,12 @@ public class FeatureMapGauss implements FeatureMapInterface {
     public Float getProbability(String bssid, String room, String level) {
         if (getFeature_map().containsKey(bssid)) {
             if (getFeature_map().get(bssid).containsKey(room)) {
-                NormalDistribution d = new NormalDistribution(getFeature_map().get(bssid).get(room).mean.doubleValue(), getFeature_map().get(bssid).get(room).variance.doubleValue());
-                return new Float(d.cumulativeProbability(Integer.parseInt(level)));
+                try {
+                    NormalDistribution d = new NormalDistribution(getFeature_map().get(bssid).get(room).mean.doubleValue(), getFeature_map().get(bssid).get(room).variance.doubleValue());
+                    return new Float(d.cumulativeProbability(Integer.parseInt(level)));
+                } catch (NotStrictlyPositiveException e) {
+                    return 0.0f;
+                }
             }
         }
         return null;
