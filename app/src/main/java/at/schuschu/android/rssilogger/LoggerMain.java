@@ -252,6 +252,11 @@ public class LoggerMain extends Activity {
     }
 
     public void guessMyRoomIntent(View v) {
+        running = false;
+        if (bc != null) {
+            unregisterReceiver(bc);
+            bc = null;
+        }
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putSerializable("Config", roomlist);

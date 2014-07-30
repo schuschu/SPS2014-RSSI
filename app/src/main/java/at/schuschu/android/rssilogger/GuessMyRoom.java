@@ -54,6 +54,7 @@ public class GuessMyRoom extends Activity {
         bc = new BayesThread();
         filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(bc, filter);
+        wifimanager.startScan();
 
     }
 
@@ -67,6 +68,7 @@ public class GuessMyRoom extends Activity {
     }
 
     private void UpdateBayes(List<ScanResult> rssi_sigs) {
+        wifimanager.startScan();
         number_of_measurements++;
         Comparator<ScanResult> c = new Comparator<ScanResult>() {
             @Override

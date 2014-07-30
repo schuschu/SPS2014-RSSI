@@ -32,7 +32,10 @@
         </activity>
         <activity
             android:name=".GuessMyRoom"
-            android:label="@string/title_activity_guess_my_room" >
+            android:label="GuessMyRoom"
+            android:parentActivityName=".LoggerMain"
+            android:screenOrientation="portrait" >
+            >
         </activity>
     </application>
 
