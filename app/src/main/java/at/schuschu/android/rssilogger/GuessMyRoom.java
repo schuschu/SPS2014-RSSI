@@ -146,8 +146,44 @@ public class GuessMyRoom extends Activity {
                 e.printStackTrace();
             }
         }
+
+        for (HashMap<String, Float> room_belief : acc_point_beliefs.values()) {
+            boolean first = true;
+            for (String cur_room : room_belief.keySet()) {
+                if (first) {
+                    room_probabilities.put(cur_room, 0.0f);
+                }
+                room_probabilities.put(cur_room, room_belief.get(cur_room) + room_probabilities.get(cur_room));
+            }
+            first = false;
+        }
+        normalize(room_probabilities);
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(acc_point_beliefs.get(room_probabilities));
+            FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "roomprobs.json", true);
+            writer.write(json);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         TextView result = (TextView) findViewById(R.id.resultText);
         result.setText("Current number of measurements: " + Integer.toString(number_of_measurements));
+    }
+
+    private void normalize(HashMap<String, Float> probs) {
+        Float checksum = 0.0f;
+        for (Float cur_prob : probs.values()) {
+            checksum += cur_prob;
+        }
+        if (checksum == 0.0f)
+            return;
+        for (String cur_prob_string : probs.keySet()) {
+            if (probs.get(cur_prob_string) == 0.0f)
+                continue;
+            probs.put(cur_prob_string, probs.get(cur_prob_string)/checksum);
+        }
     }
 
 
