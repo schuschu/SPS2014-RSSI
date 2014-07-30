@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -182,7 +183,7 @@ public class GuessMyRoom extends Activity {
         for (String cur_prob_string : probs.keySet()) {
             if (probs.get(cur_prob_string) == 0.0f)
                 continue;
-            probs.put(cur_prob_string, probs.get(cur_prob_string)/checksum);
+            probs.put(cur_prob_string, probs.get(cur_prob_string) / checksum);
         }
     }
 
@@ -214,5 +215,9 @@ public class GuessMyRoom extends Activity {
         public void onReceive(Context context, Intent intent) {
             UpdateBayes(wifimanager.getScanResults());
         }
+    }
+
+    public void initBelief(View v) {
+        room_probabilities = createInitialBelief(roomlist);
     }
 }
