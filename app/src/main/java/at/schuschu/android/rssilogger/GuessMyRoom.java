@@ -176,7 +176,15 @@ public class GuessMyRoom extends Activity {
             e.printStackTrace();
         }
         TextView result = (TextView) findViewById(R.id.resultText);
-        result.setText("Current number of measurements: " + Integer.toString(number_of_measurements));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Current number of measurements: " + Integer.toString(number_of_measurements)+ "\n");
+        for(String key : room_probabilities.keySet()) {
+            sb.append(key);
+            sb.append(": ");
+            sb.append(room_probabilities.get(key));
+            sb.append("\n");
+        }
+        result.setText(sb.toString());
     }
 
     private void normalize(HashMap<String, Float> probs) {
