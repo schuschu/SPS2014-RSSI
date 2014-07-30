@@ -153,9 +153,9 @@ public class GuessMyRoom extends Activity {
                 e.printStackTrace();
             }
         }
+        boolean first = true;
 
         for (HashMap<String, Float> room_belief : acc_point_beliefs.values()) {
-            boolean first = true;
             for (String cur_room : room_belief.keySet()) {
                 if (first) {
                     room_probabilities.put(cur_room, 0.0f);
