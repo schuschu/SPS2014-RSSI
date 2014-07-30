@@ -463,7 +463,8 @@ public class LoggerMain extends Activity {
         // Accesspoint is key 1, cell is key 2, rssi value is key 3 and we get a probability
 //        public HashMap<String, HashMap<String, HashMap< String, Float >>> feature_map;
         for (String access_point_string : pmf_map.keySet()) {
-            HashMap<String, HashMap <String, Integer>> access_point = pmf_map.get(access_point_string);
+            HashMap<String, HashMap <String, Integer>> access_point = new HashMap<String, HashMap<String, Integer>>();
+            access_point.putAll(pmf_map.get(access_point_string));
             if (!feature_map.containsKey(access_point_string)) {
                 feature_map.put(access_point_string, new HashMap<String, HashMap<String, Float>>());
             }
