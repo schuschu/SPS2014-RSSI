@@ -469,7 +469,8 @@ public class LoggerMain extends Activity {
                 feature_map.put(access_point_string, new HashMap<String, HashMap<String, Float>>());
             }
             for (String room_string : access_point.keySet()) {
-                HashMap<String, Integer> room = access_point.get(room_string);
+                HashMap<String, Integer> room = new HashMap<String, Integer>();
+                room.putAll(access_point.get(room_string));
                 if (!feature_map.get(access_point_string).containsKey(room_string)) {
                     feature_map.get(access_point_string).put(room_string, new HashMap<String, Float>());
                 }
