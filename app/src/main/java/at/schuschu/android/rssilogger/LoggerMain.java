@@ -368,8 +368,17 @@ public class LoggerMain extends Activity {
         if (roomlist.isEmpty()|| roomlist.size()<=1) {
             return;
         }
-
         roomlist.remove(spinner.getSelectedItemPosition());
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(LoggerMain.roomlist);
+            FileWriter writer = new FileWriter(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + LoggerMain.rssi_dir + File.separator + "rssilogger-cfg.json",false);
+            writer.write(json);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         roomadapter.notifyDataSetChanged();
     }
 

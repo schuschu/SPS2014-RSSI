@@ -38,15 +38,17 @@ public class FeatureMapGauss implements FeatureMapInterface {
 
     public FeatureMapGauss(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>> f_map) {
         setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
-
+        StringBuilder sb = new StringBuilder();
         for (String acc_point : f_map.keySet()) {
+            sb.append("===AP: ").append(acc_point).append("===\n");
             getFeature_map().put(acc_point, new LinkedTreeMap<String, Gaussian>());
             LinkedTreeMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
             for (String room : f_map.get(acc_point).keySet()) {
+                sb.append(room).append(": ");
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();
                 for (String level : f_map.get(acc_point).get(room).keySet()) {
-                    Log.i("serialz", Double.toString(f_map.get(acc_point).get(room).get(level)));
+                    sb.append(level).append(" ");
                     for (Integer i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
                         m.increment(Integer.parseInt(level));
                         dev.increment(Integer.parseInt(level));
@@ -55,10 +57,13 @@ public class FeatureMapGauss implements FeatureMapInterface {
 
                 Double mean = m.getResult();
                 Double devi = dev.getResult();
+                sb.append(" results in u=").append(mean).append(" s=").append(devi);
                 cur_rooms.put(room, new Gaussian(mean, devi));
 
             }
+            sb.append("\n");
         }
+        Log.i("GAUSS",sb.toString());
 
     }
 

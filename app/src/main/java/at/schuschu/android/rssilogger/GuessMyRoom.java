@@ -76,8 +76,8 @@ public class GuessMyRoom extends Activity {
             e.printStackTrace();
         }
 //
-        features = new FeatureMapLUT(feature_map);
- //       features = new FeatureMapGauss(pmf_map);
+ //       features = new FeatureMapLUT(feature_map);
+        features = new FeatureMapGauss(pmf_map);
         try {
             Gson gson = new Gson();
             String json = gson.toJson(features.getFeatureMap());
