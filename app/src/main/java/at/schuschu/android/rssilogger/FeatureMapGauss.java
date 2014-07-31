@@ -39,6 +39,8 @@ public class FeatureMapGauss implements FeatureMapInterface {
     public FeatureMapGauss(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>> f_map) {
         setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
 
+        Integer sum = 0;
+        Integer number_of_measurements = 0;
         for (String acc_point : f_map.keySet()) {
             getFeature_map().put(acc_point, new LinkedTreeMap<String, Gaussian>());
             LinkedTreeMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
@@ -46,15 +48,19 @@ public class FeatureMapGauss implements FeatureMapInterface {
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();
                 for (String level : f_map.get(acc_point).get(room).keySet()) {
-                    Log.i("serialz", Double.toString(f_map.get(acc_point).get(room).get(level)));
+//                    Log.i("serialz", Double.toString(f_map.get(acc_point).get(room).get(level)));
                     for (Integer i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
                         m.increment(Integer.parseInt(level));
                         dev.increment(Integer.parseInt(level));
+                        sum += Integer.parseInt(level);
+                        number_of_measurements++;
                     }
                 }
-
+                Double mean2 = sum.doubleValue()/number_of_measurements.doubleValue();
                 Double mean = m.getResult();
                 Double devi = dev.getResult();
+
+                Log.i("Mean Calc", "Result from manual calcs: " + Double.toString(mean2) + " Result from apache: " + Double.toString(mean));
                 cur_rooms.put(room, new Gaussian(mean, devi));
 
             }
