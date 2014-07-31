@@ -18,7 +18,9 @@ public class FeatureMapLUT implements FeatureMapInterface {
     public Float getProbability(String bssid, String room, String level) {
         if (feature_map.containsKey(bssid)) {
             if (feature_map.get(bssid).containsKey(room)) {
-                return feature_map.get(bssid).get(room).get(level).floatValue();
+                if(feature_map.get(bssid).get(room).containsKey(level)){
+                    return feature_map.get(bssid).get(room).get(level).floatValue();
+                }
             }
         }
         return null;
