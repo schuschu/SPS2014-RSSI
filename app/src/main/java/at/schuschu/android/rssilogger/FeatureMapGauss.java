@@ -39,9 +39,10 @@ public class FeatureMapGauss implements FeatureMapInterface {
     public FeatureMapGauss(LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Double>>> f_map) {
         setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
 
-        Integer sum = 0;
-        Integer number_of_measurements = 0;
+
         for (String acc_point : f_map.keySet()) {
+            Integer sum = 0;
+            Integer number_of_measurements = 0;
             getFeature_map().put(acc_point, new LinkedTreeMap<String, Gaussian>());
             LinkedTreeMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
             for (String room : f_map.get(acc_point).keySet()) {
