@@ -40,17 +40,17 @@ public class FeatureMapGauss implements FeatureMapInterface {
         setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
         StringBuilder sb = new StringBuilder();
         for (String acc_point : f_map.keySet()) {
-            Integer sum = 0;
-            Integer number_of_measurements = 0;
             sb.append("===AP: ").append(acc_point).append("===\n");
             getFeature_map().put(acc_point, new LinkedTreeMap<String, Gaussian>());
             LinkedTreeMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
             for (String room : f_map.get(acc_point).keySet()) {
                 sb.append(room).append(": ");
+                Integer sum = 0;
+                Integer number_of_measurements = 0;
                 Mean m = new Mean();
                 StandardDeviation dev = new StandardDeviation();
                 for (String level : f_map.get(acc_point).get(room).keySet()) {
-                    sb.append(level).append(" ");
+                    sb.append(level).append("*").append(f_map.get(acc_point).get(room).get(level)).append(" ");
                     for (Integer i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
                         m.increment(Integer.parseInt(level));
                         dev.increment(Integer.parseInt(level));
@@ -61,14 +61,17 @@ public class FeatureMapGauss implements FeatureMapInterface {
                 Double mean2 = sum.doubleValue()/number_of_measurements.doubleValue();
                 Double mean = m.getResult();
                 Double devi = dev.getResult();
-                sb.append(" results in u=").append(mean).append(" s=").append(devi);
+                if(devi==0){
+                    devi=0.1;
+                }
+                sb.append(" results in u=").append(mean).append("(").append(mean2).append(") ").append(" s=").append(devi);
                 cur_rooms.put(room, new Gaussian(mean, devi));
+                Log.i("GAUSS", sb.toString());
+                sb = new StringBuilder();
 
             }
             sb.append("\n");
         }
-        Log.i("GAUSS",sb.toString());
-
     }
 
     @Override
@@ -77,6 +80,7 @@ public class FeatureMapGauss implements FeatureMapInterface {
             if (getFeature_map().get(bssid).containsKey(room)) {
                 try {
                     NormalDistribution d = new NormalDistribution(getFeature_map().get(bssid).get(room).mean.doubleValue(), getFeature_map().get(bssid).get(room).variance.doubleValue());
+                    Log.i("GETPROP",bssid+ " in room " + room + " at " + level + " results in " + d.cumulativeProbability(Integer.parseInt(level)));
                     return new Float(d.cumulativeProbability(Integer.parseInt(level)));
                 } catch (NotStrictlyPositiveException e) {
                     return 0.0f;

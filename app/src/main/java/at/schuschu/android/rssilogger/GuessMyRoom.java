@@ -40,6 +40,9 @@ public class GuessMyRoom extends Activity {
     private IntentFilter filter;
     private WifiManager wifimanager;
     private FeatureMapInterface features;
+    private boolean running=false;
+    private FeatureMapGauss gaussian;
+    private FeatureMapLUT lookup_table;
 
 
 
@@ -76,8 +79,10 @@ public class GuessMyRoom extends Activity {
             e.printStackTrace();
         }
 //
- //       features = new FeatureMapLUT(feature_map);
-        features = new FeatureMapGauss(pmf_map);
+        lookup_table = new FeatureMapLUT(feature_map);
+        features = lookup_table;
+        gaussian = new FeatureMapGauss(pmf_map);
+ //       features = new FeatureMapGauss(pmf_map);
         try {
             Gson gson = new Gson();
             String json = gson.toJson(features.getFeatureMap());
@@ -98,8 +103,6 @@ public class GuessMyRoom extends Activity {
         bc = new BayesThread();
         filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(bc, filter);
-        wifimanager.startScan();
-
     }
 
     private LinkedTreeMap<String, Float> createInitialBelief(ArrayList<String> rooms) {
@@ -112,6 +115,8 @@ public class GuessMyRoom extends Activity {
     }
 
     private void UpdateBayes(List<ScanResult> rssi_sigs) {
+        if(!running)
+            return;
         wifimanager.startScan();
         number_of_measurements++;
         Comparator<ScanResult> c = new Comparator<ScanResult>() {
@@ -227,6 +232,11 @@ public class GuessMyRoom extends Activity {
         StringBuilder sb = new StringBuilder();
         sb.append("Current number of measurements: " + Integer.toString(number_of_measurements)+ "\n");
         for(String key : room_probabilities.keySet()) {
+            if(room_probabilities.get(key)>0.9) {
+                running = false;
+                sb.append(">>>");
+            }
+
             sb.append(key);
             sb.append(": ");
             sb.append(room_probabilities.get(key));
@@ -280,6 +290,16 @@ public class GuessMyRoom extends Activity {
     }
 
     public void initBelief(View v) {
+        running=true;
+        wifimanager.startScan();
         room_probabilities = createInitialBelief(roomlist);
+    }
+
+    public void switchToGaussian(View v) {
+        features = gaussian;
+    }
+
+    public void switchToLUT(View v) {
+        features = lookup_table;
     }
 }
