@@ -40,6 +40,8 @@ public class FeatureMapGauss implements FeatureMapInterface {
         setFeature_map(new LinkedTreeMap<String, LinkedTreeMap<String, Gaussian>>());
         StringBuilder sb = new StringBuilder();
         for (String acc_point : f_map.keySet()) {
+            Integer sum = 0;
+            Integer number_of_measurements = 0;
             sb.append("===AP: ").append(acc_point).append("===\n");
             getFeature_map().put(acc_point, new LinkedTreeMap<String, Gaussian>());
             LinkedTreeMap<String, Gaussian> cur_rooms = getFeature_map().get(acc_point);
@@ -52,9 +54,11 @@ public class FeatureMapGauss implements FeatureMapInterface {
                     for (Integer i = 0; i < f_map.get(acc_point).get(room).get(level); i++) {
                         m.increment(Integer.parseInt(level));
                         dev.increment(Integer.parseInt(level));
+                        sum += Integer.parseInt(level);
+                        number_of_measurements++;
                     }
                 }
-
+                Double mean2 = sum.doubleValue()/number_of_measurements.doubleValue();
                 Double mean = m.getResult();
                 Double devi = dev.getResult();
                 sb.append(" results in u=").append(mean).append(" s=").append(devi);

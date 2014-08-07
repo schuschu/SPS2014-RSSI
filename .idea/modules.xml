@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RSSILogger.iml" filepath="$PROJECT_DIR$/RSSILogger.iml" />
       <module fileurl="file://$PROJECT_DIR$/SPS2014-RSSI.iml" filepath="$PROJECT_DIR$/SPS2014-RSSI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SPS2014-RSSISchu.iml" filepath="$PROJECT_DIR$/SPS2014-RSSISchu.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
